@@ -39,7 +39,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <changelist>999999-SNAPSHOT</changelist>
+    <changelist>1025.v6051110469dc</changelist>
     <gitHubRepo>jenkins-infra/plugin-modernizer-tool</gitHubRepo>
 
     <spotless.check.skip>false</spotless.check.skip>
