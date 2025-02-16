@@ -1792,6 +1792,13 @@ public class DeclarativeRecipesTest implements RewriteTest {
                                 <maven.compiler.target>11</maven.compiler.target>
                                 <maven.compiler.release>11</maven.compiler.release>
                               </properties>
+                              <dependencies>
+                                <dependency>
+                                  <groupId>org.acegisecurity</groupId>
+                                  <artifactId>acegi-security</artifactId>
+                                  <version>1.0.7</version>
+                                </dependency>
+                            </dependencies>
                               <repositories>
                                 <repository>
                                   <id>repo.jenkins-ci.org</id>
@@ -1828,6 +1835,16 @@ public class DeclarativeRecipesTest implements RewriteTest {
                                 <jenkins-test-harness.version>%s</jenkins-test-harness.version>
                                 <jenkins.version>2.479.1</jenkins.version>
                               </properties>
+                              <dependencies>
+                                <dependency>
+                                  <groupId>org.springframework.security</groupId>
+                                  <artifactId>spring-security-config</artifactId>
+                                </dependency>
+                                <dependency>
+                                  <groupId>org.springframework.security</groupId>
+                                  <artifactId>spring-security-core</artifactId>
+                                </dependency>
+                              </dependencies>
                               <repositories>
                                 <repository>
                                   <id>repo.jenkins-ci.org</id>
@@ -1852,11 +1869,24 @@ public class DeclarativeRecipesTest implements RewriteTest {
                                 import org.kohsuke.stapler.Stapler;
                                 import org.kohsuke.stapler.StaplerRequest;
                                 import org.kohsuke.stapler.StaplerResponse;
+                                import org.acegisecurity.Authentication;
+                                import org.acegisecurity.GrantedAuthority;
+                                import org.acegisecurity.GrantedAuthorityImpl;
+                                import org.acegisecurity.providers.AbstractAuthenticationToken;
+                                import org.acegisecurity.context.SecurityContextHolder;
+                                import org.acegisecurity.AuthenticationException;
+                                import org.acegisecurity.AuthenticationManager;
+                                import org.acegisecurity.BadCredentialsException;
+                                import org.acegisecurity.userdetails.UserDetails;
+                                import org.acegisecurity.userdetails.UserDetailsService;
+                                import org.acegisecurity.userdetails.UsernameNotFoundException;
+                                import jenkins.model.Jenkins;
 
                                 public class Foo {
                                     public void foo() {
                                         StaplerRequest req = Stapler.getCurrentRequest();
                                         StaplerResponse response = Stapler.getCurrentResponse();
+                                        Authentication auth = Jenkins.getAuthentication();
                                     }
                                 }
                                 """,
@@ -1865,11 +1895,24 @@ public class DeclarativeRecipesTest implements RewriteTest {
                                 import org.kohsuke.stapler.Stapler;
                                 import org.kohsuke.stapler.StaplerRequest2;
                                 import org.kohsuke.stapler.StaplerResponse2;
+                                import org.springframework.security.core.Authentication;
+                                import org.springframework.security.core.GrantedAuthority;
+                                import org.springframework.security.core.GrantedAuthorityImpl;
+                                import org.springframework.security.core.providers.AbstractAuthenticationToken;
+                                import org.springframework.security.core.context.SecurityContextHolder;
+                                import org.springframework.security.core.AuthenticationException;
+                                import org.springframework.security.core.AuthenticationManager;
+                                import org.springframework.security.core.BadCredentialsException;
+                                import org.springframework.security.core.userdetails.UserDetails;
+                                import org.springframework.security.core.userdetails.UserDetailsService;
+                                import org.springframework.security.core.userdetails.UsernameNotFoundException;
+                                import jenkins.model.Jenkins;
 
                                 public class Foo {
                                     public void foo() {
                                         StaplerRequest2 req = Stapler.getCurrentRequest2();
                                         StaplerResponse2 response = Stapler.getCurrentResponse2();
+                                        Authentication auth = Jenkins.getAuthentication2();
                                     }
                                 }
                                 """)));
