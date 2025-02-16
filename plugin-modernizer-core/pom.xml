@@ -260,6 +260,27 @@
                   <artifactId>javax.servlet-api</artifactId>
                   <version>4.0.1</version>
                 </dependency>
+                <!-- Acegi Security migration to Spring Security -->
+                <dependency>
+                  <groupId>org.acegisecurity</groupId>
+                  <artifactId>acegi-security</artifactId>
+                  <version>1.0.7</version>
+                </dependency>
+                <dependency>
+                  <groupId>org.springframework.security</groupId>
+                  <artifactId>spring-security-config</artifactId>
+                  <version>5.8.10</version>
+                </dependency>
+                <dependency>
+                  <groupId>org.springframework.security</groupId>
+                  <artifactId>spring-security-core</artifactId>
+                  <version>5.8.10</version>
+                </dependency>
+                <dependency>
+                  <groupId>org.jenkins-ci.main</groupId>
+                  <artifactId>jenkins-core</artifactId>
+                  <version>2.497</version>
+                </dependency>
                 <!-- Testcontainers and docker-fixtures to check if package exists -->
                 <dependency>
                   <groupId>org.testcontainers</groupId>
