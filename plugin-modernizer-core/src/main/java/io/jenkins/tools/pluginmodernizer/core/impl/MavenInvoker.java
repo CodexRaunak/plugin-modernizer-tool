@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -110,6 +111,30 @@ public class MavenInvoker {
         LOG.info("Done");
     }
 
+    public void invokeRewriteDryRun(Plugin plugin) {
+        plugin.addTags(config.getRecipe().getTags());
+        LOG.info(
+                "Collecting modernization metadata for plugin {}... Please be patient",
+                plugin);
+        invokeGoals(plugin, getSingleRecipeArgsDryRun(config.getRecipe()));
+        LOG.info("Done");
+    }
+
+    /**
+     * Get the rewrite arguments to be executed for running recipe as dry run to track changes made by CLI
+     * @return The list of arguments to be passed to the rewrite plugin
+     */
+    private String[] getSingleRecipeArgsDryRun(Recipe recipe) {
+        List<String> goals = new ArrayList<>();
+        goals.add("org.openrewrite.maven:rewrite-maven-plugin:" + Settings.MAVEN_REWRITE_PLUGIN_VERSION + ":dryRun");
+        goals.add("-Denforcer.skip=true");
+        goals.add("-Dmaven.repo.local=%s".formatted(config.getMavenLocalRepo()));
+        goals.add("-Drewrite.activeRecipes=" + recipe.getName());
+        goals.add("-Drewrite.recipeArtifactCoordinates=io.jenkins.plugin-modernizer:plugin-modernizer-core:"
+                + config.getVersion());
+        return goals.toArray(String[]::new);
+    }
+
     /**
      * Get the rewrite arguments to be executed for metadata collection
      * @return The list of arguments to be passed to the rewrite plugin
@@ -157,6 +182,20 @@ public class MavenInvoker {
             });
             InvocationResult result = invoker.execute(request);
             handleInvocationResult(plugin, result);
+
+            // Check if the goal was dryRun
+            if (goals[0].equals("org.openrewrite.maven:rewrite-maven-plugin:" + Settings.MAVEN_REWRITE_PLUGIN_VERSION + ":dryRun")) {
+                Path patchFile = plugin.getLocalRepository().resolve("target").resolve("rewrite").resolve("rewrite.patch");
+                Path targetFile = Settings.getPluginsDirectory(plugin).resolve("diff.patch");
+
+                // Copy the file
+                if (Files.exists(patchFile)) {
+                    Files.copy(patchFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+                    LOG.info("Copied rewrite.patch to {}", targetFile);
+                } else {
+                    LOG.warn("No rewrite.patch file found after dry run for plugin {}", plugin.getName());
+                }
+            }
         } catch (MavenInvocationException | InterruptedException | IOException e) {
             plugin.addError("Maven invocation failed", e);
         }

@@ -311,7 +311,8 @@ public class PluginModernizer {
                     plugin.fetch(ghService);
                 }
             }
-
+            //Run OpenRewrite Dry run
+            plugin.runOpenRewriteDryRun(mavenInvoker);
             // Run OpenRewrite
             plugin.runOpenRewrite(mavenInvoker);
             if (plugin.hasErrors()) {

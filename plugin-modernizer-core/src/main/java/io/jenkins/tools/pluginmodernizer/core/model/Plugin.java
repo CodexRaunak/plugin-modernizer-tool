@@ -649,6 +649,19 @@ public class Plugin {
     }
 
     /**
+     * Run the openrewrite dry run on this plugin
+     * @param maven The maven invoker instance
+     */
+    public void runOpenRewriteDryRun(MavenInvoker maven) {
+        withJDK(JDK.JAVA_17);
+        if (config.isFetchMetadataOnly()) {
+            LOG.info("Skipping OpenRewrite recipe application for plugin {} as only metadata is required", name);
+            return;
+        }
+        maven.invokeRewriteDryRun(this);
+    }
+
+    /**
      * Fork this plugin
      * @param service The GitHub service
      */
